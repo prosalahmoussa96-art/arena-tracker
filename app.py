@@ -150,8 +150,8 @@ with col_b2:
 # --- DASHBOARD PRINCIPAL ---
 df = st.session_state.data
 
-# --- CORRECTION ET NETTOYAGE DES TYPES (LE FIX EST ICI) ---
-# On force les colonnes numériques à être des nombres, sinon les calculs plantent
+# --- CORRECTION ET NETTOYAGE DES TYPES ---
+# On force les colonnes numériques à être des nombres
 numeric_cols = ['Victoires', 'Défaites', 'Cout_Gold', 'Cout_Euros', 'Rec_Gold', 'Rec_Poussiere', 'Rec_Tickets', 'Rentabilite_Gold']
 for col in numeric_cols:
     if col in df.columns:
@@ -264,10 +264,9 @@ if not df.empty:
             mime='text/csv',
         )
         
+        # --- VERSION CORRIGÉE : SANS GRADIENT DE COULEUR ---
         st.dataframe(
-            df.sort_values('Date', ascending=False).style.background_gradient(
-                subset=['Victoires'], cmap='YlOrRd'
-            ),
+            df.sort_values('Date', ascending=False),
             use_container_width=True
         )
 
