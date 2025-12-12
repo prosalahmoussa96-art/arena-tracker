@@ -5,85 +5,91 @@ import plotly.graph_objects as go
 from datetime import datetime
 import json
 import os
-import urllib.parse
 
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(page_title="Hearthstone Arena Master", page_icon="🍺", layout="wide")
 
-# --- LE SKIN "AUBERGE" (CSS CORRIGÉ) ---
+# --- LE SKIN "AUBERGE" (CSS AVANCÉ) ---
 st.markdown("""
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato&display=swap" rel="stylesheet">
-    <style>
-    .stApp {
-        background: radial-gradient(circle, #3b2b1e 0%, #1a120b 100%);
-        color: #f0e6d2;
-        font-family: 'Lato', sans-serif;
-    }
-    
-    h1, h2, h3 {
-        font-family: 'Cinzel', serif !important;
-        color: #fcd144 !important;
-        text-shadow: 2px 2px 0px #000;
-        letter-spacing: 1px;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato&display=swap" rel="stylesheet">
+<style>
+/* Fond général : Texture bois sombre (simulée par gradient) */
+.stApp {
+    background: radial-gradient(circle, #3b2b1e 0%, #1a120b 100%);
+    color: #f0e6d2;
+    font-family: 'Lato', sans-serif;
+}
 
-    section[data-testid="stSidebar"] {
-        background-color: #241c15;
-        border-right: 2px solid #5c4b35;
-    }
+/* Titres en police Médiévale */
+h1, h2, h3 {
+    font-family: 'Cinzel', serif !important;
+    color: #fcd144 !important;
+    text-shadow: 2px 2px 0px #000;
+    letter-spacing: 1px;
+}
 
-    div[data-testid="stMetric"] {
-        background-color: #4a3b2a;
-        border: 2px solid #fcd144;
-        border-radius: 10px;
-        padding: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-    }
-    div[data-testid="stMetricValue"] {
-        color: #fff !important;
-        font-family: 'Cinzel', serif;
-    }
-    div[data-testid="stMetricLabel"] {
-        color: #e0d0b0 !important;
-    }
+/* Sidebar : Aspect Cuir foncé */
+section[data-testid="stSidebar"] {
+    background-color: #241c15;
+    border-right: 2px solid #5c4b35;
+}
 
-    .stButton>button {
-        background: linear-gradient(to bottom, #3b5ca3 0%, #223a6b 100%);
-        color: white;
-        border: 2px solid #6b8cce;
-        border-radius: 5px;
-        font-family: 'Cinzel', serif;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-    .stButton>button:hover {
-        background: linear-gradient(to bottom, #4a75cc 0%, #2b4b8a 100%);
-        border-color: #fff;
-    }
+/* Conteneurs de métriques */
+div[data-testid="stMetric"] {
+    background-color: #4a3b2a;
+    border: 2px solid #fcd144;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+}
+div[data-testid="stMetricValue"] {
+    color: #fff !important;
+    font-family: 'Cinzel', serif;
+}
+div[data-testid="stMetricLabel"] {
+    color: #e0d0b0 !important;
+}
 
-    .stAlert {
-        background-color: #2b221a;
-        border: 1px solid #5c4b35;
-        color: #f0e6d2;
-    }
-    
-    .mail-link {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #fcd144;
-        color: #3b2b1e !important;
-        text-decoration: none;
-        border-radius: 5px;
-        font-weight: bold;
-        font-family: 'Cinzel', serif;
-        border: 2px solid #b8860b;
-    }
-    .mail-link:hover {
-        background-color: #e5be35;
-        border-color: #fff;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+/* Boutons */
+.stButton>button {
+    background: linear-gradient(to bottom, #3b5ca3 0%, #223a6b 100%);
+    color: white;
+    border: 2px solid #6b8cce;
+    border-radius: 5px;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.stButton>button:hover {
+    background: linear-gradient(to bottom, #4a75cc 0%, #2b4b8a 100%);
+    border-color: #fff;
+}
+
+/* Alertes */
+.stAlert {
+    background-color: #2b221a;
+    border: 1px solid #5c4b35;
+    color: #f0e6d2;
+}
+
+/* Lien email */
+.mail-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #fcd144;
+    color: #3b2b1e !important;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-family: 'Cinzel', serif;
+    border: 2px solid #b8860b;
+}
+.mail-link:hover {
+    background-color: #e5be35;
+    border-color: #fff;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # --- DONNÉES ET LOGOS ---
 CLASSES_LOGOS = {
@@ -317,8 +323,8 @@ if not df.empty:
         )
 
     with tab3:
-        st.markdown("### 📧 Générateur de Rapport")
-        st.write("Génère un email pré-rempli avec tes stats du mois.")
+        st.markdown("### 📧 Générateur de Rapport Mensuel")
+        st.write("Copie ce texte pour tes archives ou pour me l'envoyer.")
         
         # Sélecteur de mois
         current_month = datetime.now().month
@@ -334,40 +340,25 @@ if not df.empty:
             # Meilleure run du mois
             best_run = runs_this_month.loc[runs_this_month['Victoires'].idxmax()]
             
-            # Création du contenu du mail
-            subject = f"Rapport Arena Hearthstone - {datetime.now().strftime('%B %Y')}"
-            
             rapport_text = f"""
-Voici mon bilan Hearthstone pour ce mois :
+--- RAPPORT ARENA : {datetime.now().strftime('%B %Y')} ---
 
 🏆 Performance :
 - Runs jouées : {nb_runs}
 - Moyenne Victoires : {m_wins:.2f}
-- Meilleure Run : {best_run['Victoires']} victoires ({best_run['Classe']})
+- Meilleure Run : {best_run['Victoires']} victoires avec {best_run['Classe']}
 
 💰 Bilan Comptable :
-- Dépense Réelle : {m_depense:.2f} €
+- Dépense Totale (Réel) : {m_depense:.2f} €
 - Gold Gagnés : {m_gold:.0f}
-- Poussière : {m_dust:.0f}
+- Poussière Gagnée : {m_dust:.0f}
 
 ⚠️ Statut : {"🔴 DÉPENSIER" if m_depense > 10 else "🟢 RENTABLE"}
+------------------------------------------------
             """
-            
-            st.text_area("Aperçu du texte :", value=rapport_text, height=250)
-            
-            # Création du lien "mailto"
-            body_encoded = urllib.parse.quote(rapport_text)
-            subject_encoded = urllib.parse.quote(subject)
-            mailto_link = f"mailto:?subject={subject_encoded}&body={body_encoded}"
-            
-            st.markdown(f"""
-                <a href="{mailto_link}" target="_blank" class="mail-link">
-                    📧 Ouvrir mon client mail avec ce rapport
-                </a>
-            """, unsafe_allow_html=True)
-            
+            st.text_area("Texte du rapport :", value=rapport_text, height=300)
         else:
-            st.info("Aucune run enregistrée ce mois-ci. Joue un peu avant de faire des rapports !")
+            st.info("Aucune run enregistrée ce mois-ci.")
 
     with tab4:
         st.markdown("### 🏆 Hall of Fame")
