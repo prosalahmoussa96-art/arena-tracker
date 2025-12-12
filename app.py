@@ -5,37 +5,33 @@ import plotly.graph_objects as go
 from datetime import datetime
 import json
 import os
-import urllib.parse # <--- AJOUT NÉCESSAIRE POUR LE MAIL
+import urllib.parse
 
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(page_title="Hearthstone Arena Master", page_icon="🍺", layout="wide")
 
-# --- LE SKIN "AUBERGE" (CSS AVANCÉ) ---
+# --- LE SKIN "AUBERGE" (CSS CORRIGÉ) ---
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato&display=swap" rel="stylesheet">
     <style>
-    /* Fond général : Texture bois sombre (simulée par gradient) */
     .stApp {
         background: radial-gradient(circle, #3b2b1e 0%, #1a120b 100%);
-        color: #f0e6d2; /* Couleur Parchemin clair pour le texte */
+        color: #f0e6d2;
         font-family: 'Lato', sans-serif;
     }
     
-    /* Titres en police Médiévale */
     h1, h2, h3 {
         font-family: 'Cinzel', serif !important;
-        color: #fcd144 !important; /* Or Hearthstone */
+        color: #fcd144 !important;
         text-shadow: 2px 2px 0px #000;
         letter-spacing: 1px;
     }
 
-    /* Sidebar : Aspect Cuir foncé */
     section[data-testid="stSidebar"] {
         background-color: #241c15;
         border-right: 2px solid #5c4b35;
     }
 
-    /* Conteneurs de métriques (Les cartes de stats) */
     div[data-testid="stMetric"] {
         background-color: #4a3b2a;
         border: 2px solid #fcd144;
@@ -51,7 +47,6 @@ st.markdown("""
         color: #e0d0b0 !important;
     }
 
-    /* Boutons : Style bouton HS Bleu/Violet */
     .stButton>button {
         background: linear-gradient(to bottom, #3b5ca3 0%, #223a6b 100%);
         color: white;
@@ -66,14 +61,12 @@ st.markdown("""
         border-color: #fff;
     }
 
-    /* Alertes et Messages */
     .stAlert {
         background-color: #2b221a;
         border: 1px solid #5c4b35;
         color: #f0e6d2;
     }
     
-    /* Lien mail personnalisé */
     .mail-link {
         display: inline-block;
         padding: 10px 20px;
@@ -363,7 +356,6 @@ Voici mon bilan Hearthstone pour ce mois :
             st.text_area("Aperçu du texte :", value=rapport_text, height=250)
             
             # Création du lien "mailto"
-            # On encode le texte pour qu'il passe dans une URL
             body_encoded = urllib.parse.quote(rapport_text)
             subject_encoded = urllib.parse.quote(subject)
             mailto_link = f"mailto:?subject={subject_encoded}&body={body_encoded}"
