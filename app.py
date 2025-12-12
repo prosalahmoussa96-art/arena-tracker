@@ -150,6 +150,13 @@ with col_b2:
 # --- DASHBOARD PRINCIPAL ---
 df = st.session_state.data
 
+# --- CORRECTION ET NETTOYAGE DES TYPES (LE FIX EST ICI) ---
+# On force les colonnes numériques à être des nombres, sinon les calculs plantent
+numeric_cols = ['Victoires', 'Défaites', 'Cout_Gold', 'Cout_Euros', 'Rec_Gold', 'Rec_Poussiere', 'Rec_Tickets', 'Rentabilite_Gold']
+for col in numeric_cols:
+    if col in df.columns:
+        df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+
 st.title("🛡️ Hearthstone Arena Master")
 st.markdown("*Gère ta fortune et évite la ruine...*")
 st.markdown("---")
@@ -204,6 +211,10 @@ if not df.empty:
                 'Défaites': 'sum'
             }).reset_index()
             class_stats['Total_Games'] = class_stats['Victoires'] + class_stats['Défaites']
+            
+            # Protection contre la division par zéro
+            class_stats = class_stats[class_stats['Total_Games'] > 0]
+            
             class_stats['Taux_Victoire'] = (class_stats['Victoires'] / class_stats['Total_Games'] * 100).round(1)
             
             fig_bar = px.bar(class_stats, x='Classe', y='Victoires', 
