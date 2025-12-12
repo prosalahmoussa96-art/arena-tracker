@@ -5,22 +5,21 @@ import plotly.graph_objects as go
 from datetime import datetime
 import json
 import os
+import urllib.parse
 
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(page_title="Hearthstone Arena Master", page_icon="🍺", layout="wide")
 
-# --- LE SKIN "AUBERGE" (CSS AVANCÉ) ---
+# --- LE SKIN "AUBERGE" (CSS CORRIGÉ) ---
 st.markdown("""
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato&display=swap" rel="stylesheet">
 <style>
-/* Fond général : Texture bois sombre (simulée par gradient) */
 .stApp {
     background: radial-gradient(circle, #3b2b1e 0%, #1a120b 100%);
     color: #f0e6d2;
     font-family: 'Lato', sans-serif;
 }
 
-/* Titres en police Médiévale */
 h1, h2, h3 {
     font-family: 'Cinzel', serif !important;
     color: #fcd144 !important;
@@ -28,13 +27,11 @@ h1, h2, h3 {
     letter-spacing: 1px;
 }
 
-/* Sidebar : Aspect Cuir foncé */
 section[data-testid="stSidebar"] {
     background-color: #241c15;
     border-right: 2px solid #5c4b35;
 }
 
-/* Conteneurs de métriques */
 div[data-testid="stMetric"] {
     background-color: #4a3b2a;
     border: 2px solid #fcd144;
@@ -42,15 +39,16 @@ div[data-testid="stMetric"] {
     padding: 10px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.5);
 }
+
 div[data-testid="stMetricValue"] {
     color: #fff !important;
     font-family: 'Cinzel', serif;
 }
+
 div[data-testid="stMetricLabel"] {
     color: #e0d0b0 !important;
 }
 
-/* Boutons */
 .stButton>button {
     background: linear-gradient(to bottom, #3b5ca3 0%, #223a6b 100%);
     color: white;
@@ -60,19 +58,18 @@ div[data-testid="stMetricLabel"] {
     font-weight: bold;
     text-transform: uppercase;
 }
+
 .stButton>button:hover {
     background: linear-gradient(to bottom, #4a75cc 0%, #2b4b8a 100%);
     border-color: #fff;
 }
 
-/* Alertes */
 .stAlert {
     background-color: #2b221a;
     border: 1px solid #5c4b35;
     color: #f0e6d2;
 }
 
-/* Lien email */
 .mail-link {
     display: inline-block;
     padding: 10px 20px;
@@ -84,6 +81,7 @@ div[data-testid="stMetricLabel"] {
     font-family: 'Cinzel', serif;
     border: 2px solid #b8860b;
 }
+
 .mail-link:hover {
     background-color: #e5be35;
     border-color: #fff;
@@ -243,12 +241,12 @@ if not df.empty:
     
     if depense_recente >= 12.0:
         st.markdown("""
-            <div style="background-color: #590d0d; padding: 15px; border: 2px solid #ff0000; border-radius: 10px; color: #ffcccc;">
-                <h3 style="color: #ffcccc !important;">🚨 STOP IMMÉDIAT !</h3>
-                <p><strong>Dépense critique détectée :</strong> Tu as lâché plus de 12€ récemment.</p>
-                <p>La spirale de la défaite est active. Ferme le jeu. C'est un ordre de l'ingénieur.</p>
-            </div>
-        """, unsafe_allow_html=True)
+<div style="background-color: #590d0d; padding: 15px; border: 2px solid #ff0000; border-radius: 10px; color: #ffcccc;">
+    <h3 style="color: #ffcccc !important;">🚨 STOP IMMÉDIAT !</h3>
+    <p><strong>Dépense critique détectée :</strong> Tu as lâché plus de 12€ récemment.</p>
+    <p>La spirale de la défaite est active. Ferme le jeu. C'est un ordre de l'ingénieur.</p>
+</div>
+""", unsafe_allow_html=True)
     elif depense_recente > 0:
         st.warning(f"⚠️ Vigilance : Tu as dépensé {depense_recente}€ récemment. Reste concentré.")
     else:
@@ -323,8 +321,8 @@ if not df.empty:
         )
 
     with tab3:
-        st.markdown("### 📧 Générateur de Rapport Mensuel")
-        st.write("Copie ce texte pour tes archives ou pour me l'envoyer.")
+        st.markdown("### 📧 Générateur de Rapport")
+        st.write("Génère un email pré-rempli avec tes stats du mois.")
         
         # Sélecteur de mois
         current_month = datetime.now().month
@@ -340,25 +338,34 @@ if not df.empty:
             # Meilleure run du mois
             best_run = runs_this_month.loc[runs_this_month['Victoires'].idxmax()]
             
-            rapport_text = f"""
---- RAPPORT ARENA : {datetime.now().strftime('%B %Y')} ---
+            # Création du contenu du mail
+            subject = f"Rapport Arena Hearthstone - {datetime.now().strftime('%B %Y')}"
+            
+            rapport_text = f"""Voici mon bilan Hearthstone pour ce mois :
 
 🏆 Performance :
 - Runs jouées : {nb_runs}
 - Moyenne Victoires : {m_wins:.2f}
-- Meilleure Run : {best_run['Victoires']} victoires avec {best_run['Classe']}
+- Meilleure Run : {best_run['Victoires']} victoires ({best_run['Classe']})
 
 💰 Bilan Comptable :
-- Dépense Totale (Réel) : {m_depense:.2f} €
+- Dépense Réelle : {m_depense:.2f} €
 - Gold Gagnés : {m_gold:.0f}
-- Poussière Gagnée : {m_dust:.0f}
+- Poussière : {m_dust:.0f}
 
-⚠️ Statut : {"🔴 DÉPENSIER" if m_depense > 10 else "🟢 RENTABLE"}
-------------------------------------------------
-            """
-            st.text_area("Texte du rapport :", value=rapport_text, height=300)
+⚠️ Statut : {"🔴 DÉPENSIER" if m_depense > 10 else "🟢 RENTABLE"}"""
+            
+            st.text_area("Aperçu du texte :", value=rapport_text, height=250)
+            
+            # Création du lien "mailto"
+            body_encoded = urllib.parse.quote(rapport_text)
+            subject_encoded = urllib.parse.quote(subject)
+            mailto_link = f"mailto:?subject={subject_encoded}&body={body_encoded}"
+            
+            st.markdown(f'<a href="{mailto_link}" target="_blank" class="mail-link">📧 Ouvrir mon client mail avec ce rapport</a>', unsafe_allow_html=True)
+            
         else:
-            st.info("Aucune run enregistrée ce mois-ci.")
+            st.info("Aucune run enregistrée ce mois-ci. Joue un peu avant de faire des rapports !")
 
     with tab4:
         st.markdown("### 🏆 Hall of Fame")
@@ -390,12 +397,12 @@ if not df.empty:
 else:
     st.info("👋 Bienvenue Voyageur ! Utilise le menu à gauche pour commencer.")
     st.markdown("""
-    ### Comment utiliser cette app ?
-    
-    1. **📝 Enregistre tes runs** via le formulaire à gauche
-    2. **📊 Analyse tes statistiques** pour identifier tes meilleures classes
-    3. **💰 Surveille tes dépenses** avec le système d'alerte Kraken
-    4. **📥 Exporte tes données** pour les sauvegarder ailleurs
-    
-    *Que la chance soit avec toi dans l'Arène !*
-    """)
+### Comment utiliser cette app ?
+
+1. **📝 Enregistre tes runs** via le formulaire à gauche
+2. **📊 Analyse tes statistiques** pour identifier tes meilleures classes
+3. **💰 Surveille tes dépenses** avec le système d'alerte Kraken
+4. **📥 Exporte tes données** pour les sauvegarder ailleurs
+
+*Que la chance soit avec toi dans l'Arène !*
+""")
