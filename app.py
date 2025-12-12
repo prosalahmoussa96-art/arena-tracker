@@ -10,84 +10,24 @@ import urllib.parse
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(page_title="Hearthstone Arena Master", page_icon="🍺", layout="wide")
 
-# --- LE SKIN "AUBERGE" (CSS CORRIGÉ) ---
-st.markdown("""
+# --- LE SKIN "AUBERGE" ---
+css_code = """
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato&display=swap" rel="stylesheet">
 <style>
-.stApp {
-    background: radial-gradient(circle, #3b2b1e 0%, #1a120b 100%);
-    color: #f0e6d2;
-    font-family: 'Lato', sans-serif;
-}
-
-h1, h2, h3 {
-    font-family: 'Cinzel', serif !important;
-    color: #fcd144 !important;
-    text-shadow: 2px 2px 0px #000;
-    letter-spacing: 1px;
-}
-
-section[data-testid="stSidebar"] {
-    background-color: #241c15;
-    border-right: 2px solid #5c4b35;
-}
-
-div[data-testid="stMetric"] {
-    background-color: #4a3b2a;
-    border: 2px solid #fcd144;
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-}
-
-div[data-testid="stMetricValue"] {
-    color: #fff !important;
-    font-family: 'Cinzel', serif;
-}
-
-div[data-testid="stMetricLabel"] {
-    color: #e0d0b0 !important;
-}
-
-.stButton>button {
-    background: linear-gradient(to bottom, #3b5ca3 0%, #223a6b 100%);
-    color: white;
-    border: 2px solid #6b8cce;
-    border-radius: 5px;
-    font-family: 'Cinzel', serif;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.stButton>button:hover {
-    background: linear-gradient(to bottom, #4a75cc 0%, #2b4b8a 100%);
-    border-color: #fff;
-}
-
-.stAlert {
-    background-color: #2b221a;
-    border: 1px solid #5c4b35;
-    color: #f0e6d2;
-}
-
-.mail-link {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #fcd144;
-    color: #3b2b1e !important;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    font-family: 'Cinzel', serif;
-    border: 2px solid #b8860b;
-}
-
-.mail-link:hover {
-    background-color: #e5be35;
-    border-color: #fff;
-}
+.stApp {background: radial-gradient(circle, #3b2b1e 0%, #1a120b 100%); color: #f0e6d2; font-family: 'Lato', sans-serif;}
+h1, h2, h3 {font-family: 'Cinzel', serif !important; color: #fcd144 !important; text-shadow: 2px 2px 0px #000; letter-spacing: 1px;}
+section[data-testid="stSidebar"] {background-color: #241c15; border-right: 2px solid #5c4b35;}
+div[data-testid="stMetric"] {background-color: #4a3b2a; border: 2px solid #fcd144; border-radius: 10px; padding: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.5);}
+div[data-testid="stMetricValue"] {color: #fff !important; font-family: 'Cinzel', serif;}
+div[data-testid="stMetricLabel"] {color: #e0d0b0 !important;}
+.stButton>button {background: linear-gradient(to bottom, #3b5ca3 0%, #223a6b 100%); color: white; border: 2px solid #6b8cce; border-radius: 5px; font-family: 'Cinzel', serif; font-weight: bold; text-transform: uppercase;}
+.stButton>button:hover {background: linear-gradient(to bottom, #4a75cc 0%, #2b4b8a 100%); border-color: #fff;}
+.stAlert {background-color: #2b221a; border: 1px solid #5c4b35; color: #f0e6d2;}
+.mail-link {display: inline-block; padding: 10px 20px; background-color: #fcd144; color: #3b2b1e !important; text-decoration: none; border-radius: 5px; font-weight: bold; font-family: 'Cinzel', serif; border: 2px solid #b8860b;}
+.mail-link:hover {background-color: #e5be35; border-color: #fff;}
 </style>
-""", unsafe_allow_html=True)
+"""
+st.markdown(css_code, unsafe_allow_html=True)
 
 # --- DONNÉES ET LOGOS ---
 CLASSES_LOGOS = {
